@@ -38,4 +38,4 @@ Open [http://127.0.0.1:8288](http://127.0.0.1:8288) with your browser to see the
 
 ## License
 
-[Apache License][./LICENSE]
+[Apache License](./LICENSE)
