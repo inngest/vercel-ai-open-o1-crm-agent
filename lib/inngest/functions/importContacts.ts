@@ -1,3 +1,4 @@
+import { sql } from "@vercel/postgres";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { NonRetriableError } from "inngest";
@@ -15,21 +16,12 @@ export const actions: EngineAction[] = [
     kind: "openaiCall",
     name: "Make a dynamic call to OpenAI API",
     handler: async ({ event, step, workflowAction, state }) => {
-      console.log("openaiCall!!!");
       const result = await step.run("make-openai-call", async () => {
         if (!workflowAction.inputs?.prompt) {
           throw new NonRetriableError("`openaiCall` called without a prompt.");
         }
 
         const data = state.get("contacts") || event.data.contactsFileContent;
-
-        console.log(
-          "PROMPT",
-          formatGeneratedPromptDataPlaceholder(
-            workflowAction.inputs.prompt,
-            data
-          )
-        );
 
         return await generateText({
           model: openai(workflowAction.inputs?.model || "gpt-3.5-turbo"),
@@ -57,7 +49,6 @@ export const actions: EngineAction[] = [
     name: "Convert to JSON",
     description: "convert CSV data to JSON items",
     handler: async ({ step, event, state }) => {
-      console.log("CONVERT");
       const json = await step.run("convert-csv-to-json", async () => {
         return await csv().fromString(event.data.contactsFileContent);
       });
@@ -69,7 +60,6 @@ export const actions: EngineAction[] = [
     name: "Enrich contact data",
     description: "enrich contact information",
     handler: async ({}) => {
-      console.log("ENRICH");
       // For example, call Clearbit or other enrichment API
     },
   },
@@ -77,9 +67,17 @@ export const actions: EngineAction[] = [
     kind: "save",
     name: "Save contacts",
     description: "save contact information to the database",
-    handler: async ({ state }) => {
-      console.log("SAVE");
-      console.log(state.get("contacts"));
+    handler: async ({ state, step }) => {
+      await step.run("save-contacts-to-database", async () => {
+        const contacts = JSON.parse(state.get("contacts"));
+        await sql.query(
+          `INSERT INTO contacts (Name,Position,Company,Email,Decider,Ranking) VALUES ${contacts
+            .map((contact: any) => {
+              return `('${contact.Name}', '${contact.Position}', '${contact.Company}', '${contact.Email}', ${contact.Decider}, ${contact.Ranking})`;
+            })
+            .join()}`
+        );
+      });
     },
   },
 ];
