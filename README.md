@@ -1,4 +1,4 @@
-# Putting a contacts importer on autopilot with OpenAI o1, Vercel AI, and Inngest
+![](./featured-image.png)
 
 ## Getting Started
 
