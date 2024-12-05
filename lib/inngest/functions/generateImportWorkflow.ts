@@ -1,6 +1,4 @@
-import { generateText } from "ai";
 import { inngest } from "../client";
-import { openai } from "@ai-sdk/openai";
 import { Workflow } from "@inngest/workflow-kit";
 import { actions } from "./importContacts";
 
@@ -40,7 +38,6 @@ ${contactsFileContent}
 export default inngest.createFunction(
   {
     id: "generate-import-workflow",
-    // cf, Tier 3 limits: https://x.com/OpenAIDevs/status/1841176573527077235
     throttle: {
       limit: 5000,
       period: "1m",
@@ -48,18 +45,18 @@ export default inngest.createFunction(
   },
   { event: "contacts.uploaded" },
   async ({ event, step }) => {
-    const generatedStepsResult = await step.run(
-      "openai-o1-generate-steps",
-      async () => {
-        return await generateText({
-          // for prod:
-          model: openai("o1-preview-2024-09-12"),
-          // for dev:
-          // model: openai("o1-mini"),
+    const generatedStepsResult = await step.ai.infer(
+      "generate-workflow-steps",
+      {
+        model: step.ai.models.openai({ model: "o1-preview" as any }),
+        body: {
           messages: [
-            { role: "user", content: prompt(event.data.contactsFileContent) },
+            {
+              role: "user",
+              content: prompt(event.data.contactsFileContent),
+            },
           ],
-        });
+        },
       }
     );
 
@@ -67,7 +64,7 @@ export default inngest.createFunction(
       "format-steps-to-workflow-instance",
       async () => {
         const steps = JSON.parse(
-          ((await generatedStepsResult.text) as string)
+          (generatedStepsResult.choices[0].message.content || "{}")
             .replace("```json", "")
             .replace("```", "")
         ) as GeneratedSteps;
