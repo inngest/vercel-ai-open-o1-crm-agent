@@ -48,7 +48,7 @@ export default inngest.createFunction(
     const generatedStepsResult = await step.ai.infer(
       "generate-workflow-steps",
       {
-        model: step.ai.models.openai({ model: "o1-preview" as any }),
+        model: step.ai.models.openai({ model: "o1-preview" }),
         body: {
           messages: [
             {

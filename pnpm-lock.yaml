@@ -39,8 +39,8 @@ dependencies:
     specifier: ^2.0.10
     version: 2.0.10
   inngest:
-    specifier: ^3.27.1
-    version: 3.27.1(next@14.2.15)(typescript@5.7.2)
+    specifier: ^3.27.4
+    version: 3.27.4(next@14.2.15)(typescript@5.7.2)
   lucide-react:
     specifier: ^0.453.0
     version: 0.453.0(react@18.3.1)
@@ -2925,8 +2925,8 @@ packages:
   /inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
 
-  /inngest@3.27.1(next@14.2.15)(typescript@5.7.2):
-    resolution: {integrity: sha512-66JvDYD46cejv1gdCTNGgTTNpg6K6njpBxiZuOPkEDbod1By2M1gnfrOXpJrWkpzVvG+/dY+I3jnhzitwSYPuA==}
+  /inngest@3.27.4(next@14.2.15)(typescript@5.7.2):
+    resolution: {integrity: sha512-S71jJNxmfA9d4jmFKSxgi/u5d+tSmpsThAmTMHhjGieBTSrfGguwhHHskkPpFCtrMWI+Qdy8ek/rtQNxFkE9eQ==}
     engines: {node: '>=14'}
     peerDependencies:
       '@sveltejs/kit': '>=1.27.3'
